@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users-Api</title>
+    <style>
+        #showUsers{
+            width: 600px;
+            margin: 0px auto;
+            padding: 10px 30px;
+            background-color: #ECF2FF;
+        }
+        strong{
+            color: #000;
+        }
+        #innerBtn, #load-user{
+            padding: 10px 20px;
+            border: none;
+            background-color: black;
+            border: 1px solid transparent;
+            color: #fff;
+        }
+        #innerBtn:hover, #load-user:hover{
+            background-color: #fff;
+            color: #000;
+            border: 1px solid #000
+        }
+        #viewMore{
+            text-align: center;
+        }
+        input{
+            
+            width: 35%;
+            padding: 10px 10px;
+            background-color: #ECF2FF;
+        }
+        .countBtn{
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="countBtn">
+    <input id="user-count" type="text" placeholder="Enter how many users you want"><button id="load-user">load User</button>
+</div>
+<div id="showUsers">
+    <h1>Users Info</h1>
+</div>
+<div id="user-detail">
+
+</div>
+
+
+<script>
+    //input form of user count
+    document.getElementById('load-user').addEventListener('click', function(){
+        const countText = document.getElementById('user-count').value;
+        const count = parseInt(countText);
+
+        // main api fetch
+        fetch('https://jsonplaceholder.typicode.com/users')
+        .then(res => res.json())
+        .then(data => {
+
+            data = data.slice(0, count);  //sliced user count
+
+            const usersContainer = document.getElementById('showUsers');
+            usersContainer.innerHTML = '';
+            for (let i = 0; i < data.length; i++) {
+                const user = data[i];
+                const p = document.createElement('p');
+                p.innerHTML = `<strong>Id: </strong>${user.id} <strong>Name: </strong>${user.name}
+                <button onclick="userDetails(${user.id})" id="innerBtn">View More</button>`;
+                usersContainer.appendChild(p);
+            }
+        })
+    })
+
+
+    //moved upper
+    // fetch('https://jsonplaceholder.typicode.com/users')
+    // .then(res => res.json())
+    // .then(data => {
+    //     const usersContainer = document.getElementById('showUsers');
+    //     for (let i = 0; i < data.length; i++) {
+    //         const user = data[i];
+    //         const p = document.createElement('p');
+    //          p.innerHTML = `<strong>Id: </strong>${user.id} <strong>Name: </strong>${user.name}
+    //          <button onclick="userDetails(${user.id})" id="innerBtn">View More</button>`;
+    //          usersContainer.appendChild(p);
+    //     }
+    // })
+    
+    //view more section
+    function userDetails(userId){
+        fetch(`https://jsonplaceholder.typicode.com/users/${userId}`)
+        .then(res => res.json())
+        .then(data => {
+            const detail = document.getElementById('user-detail');
+            detail.innerHTML = `
+                <div id="viewMore">
+                    <h1>Users More info</h1>
+                    <h3>${data.name}</h3>
+                    <h3>${data.username}</h3>
+                    <h3>${data.email}</h3>
+                    <h3>${data.address.street}</h3>               
+                </div> 
+            `;
+        })
+    }
+</script>
+</body>
+</html>
